@@ -13,6 +13,12 @@ describe EmailValidator do
     validates :email, :email => {:mx => true}
   end
 
+  person_class_allow_blank = Class.new do
+    include ActiveModel::Validations
+    attr_accessor :email
+    validates :email, :email => {:allow_blank => true}
+  end
+
 
   shared_examples_for "Validating emails" do
     
@@ -58,6 +64,14 @@ describe EmailValidator do
         subject.errors[:email].should == errors
       end
 
+    end
+
+    describe "validating email" do
+      subject { person_class_allow_blank.new }
+
+      it "should fail when email empty" do
+        subject.valid?.should be_true
+      end
     end
 
     describe "validating email with MX" do
